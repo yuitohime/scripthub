@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Chia Sẻ Script / Note</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e1e2f 0%, #11111b 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #cdd6f4;
+            padding: 20px;
+        }
+
+        .note-box {
+            width: 100%;
+            max-width: 500px;
+            background-color: #181825;
+            border: 1px solid #313244;
+            border-radius: 16px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            position: relative;
+        }
+
+        .note-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #cba6f7;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .note-subtitle {
+            text-align: center;
+            font-size: 13px;
+            color: #a6adc8;
+            margin-bottom: 25px;
+        }
+
+        /* Khung chứa Text và Nút Copy bên trong */
+        .content-container {
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .note-content {
+            width: 100%;
+            height: 300px;
+            resize: none;
+            padding: 15px;
+            font-family: 'Consolas', 'Fira Code', 'Courier New', monospace;
+            font-size: 14px;
+            color: #a6e3a1; /* Màu xanh lá kiểu code */
+            background-color: #11111b;
+            border: 1px solid #45475a;
+            border-radius: 10px;
+            outline: none;
+            line-height: 1.6;
+            cursor: text;
+        }
+
+        /* Nút Copy nằm gọn gàng phía dưới khung */
+        .btn-copy {
+            margin-top: 15px;
+            background: linear-gradient(90deg, #b4befe 0%, #cba6f7 100%);
+            color: #11111b;
+            border: none;
+            padding: 12px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .btn-copy:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(203, 166, 247, 0.4);
+        }
+
+        .btn-copy:active {
+            transform: translateY(1px);
+        }
+
+        /* Thông báo nhỏ khi copy thành công */
+        .toast-msg {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #a6e3a1;
+            color: #11111b;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast-msg.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="note-box">
+        <div id="toast" class="toast-msg">Đã sao chép thành công!</div>
+        
+        <div class="note-title">Note</div>
+        <div class="note-subtitle">Vui lòng bấm nút bên dưới để sao chép Script</div>
+        
+        <div class="content-container">
+            <!-- Thuộc tính 'readonly' giúp người xem không thể sửa chữ -->
+            <textarea id="scriptText" class="note-content" readonly>loadstring(game:HttpGet("https://pastebin.com/raw/KqqJmxY9"))()</textarea>
+            
+            <button class="btn-copy" onclick="copyScript()">Sao chép Script</button>
+        </div>
+    </div>
+
+    <script>
+        function copyScript() {
+            var copyText = document.getElementById("scriptText");
+            
+            // Chọn đoạn văn bản
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // Dành cho điện thoại
+
+            // Chép vào bộ nhớ tạm
+            navigator.clipboard.writeText(copyText.value).then(() => {
+                // Hiển thị thông báo thành công
+                var toast = document.getElementById("toast");
+                toast.classList.add("show");
+                
+                // Ẩn thông báo sau 2 giây
+                setTimeout(function() {
+                    toast.classList.remove("show");
+                }, 2000);
+            }).catch(err => {
+                // Cách dự phòng nếu trình duyệt cũ không hỗ trợ clipboard API
+                document.execCommand("copy");
+                var toast = document.getElementById("toast");
+                toast.classList.add("show");
+                setTimeout(function() {
+                    toast.classList.remove("show");
+                }, 2000);
+            });
+        }
+    </script>
+
+</body>
+</html>
